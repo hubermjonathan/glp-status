@@ -5,10 +5,6 @@ const TABLE_NAME = 'glp-queue';
 const TTL = 3600;
 
 const dynamo = DynamoDBDocument.from(new DynamoDB({
-    credentials: {
-        accessKeyId: process.env.ID,
-        secretAccessKey: process.env.KEY,
-    },
     region: process.env.REGION,
 }));
 
