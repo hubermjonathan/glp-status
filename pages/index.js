@@ -55,6 +55,14 @@ export default function Stacks() {
     const [stacksLength, setStacksLength] = useState(-1);
     const [stackReport, setStackReport] = useState();
 
+    const updateStacksLength = (stacks) => {
+        if (stacks.length === 0) {
+            setStacksLength(-1);
+        } else {
+            setStacksLength(stacks[0]['number_of_stacks']);
+        }
+    };
+
     const stackReportTheme = (theme) => ({
         ...theme,
         borderRadius: 0,
@@ -101,20 +109,20 @@ export default function Stacks() {
     };
 
     const handleSubmit = () => {
-        fetch('/api/submitStackReport', {
-            method: 'POST',
+        fetch('/api/stacks', {
+            method: 'PUT',
             body: JSON.stringify({ numberOfStacks: stackReport.value }),
         })
             .then(res => res.json())
-            .then(data => setStacksLength(data));
+            .then(data => updateStacksLength(data));
 
         setStackReport(undefined);
     };
 
     useEffect(() => {
-        fetch('/api/getStacks')
+        fetch('/api/stacks')
             .then(res => res.json())
-            .then(data => setStacksLength(data));
+            .then(data => updateStacksLength(data));
     }, []);
 
     return (
