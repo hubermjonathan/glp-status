@@ -1,131 +1,157 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import Select from 'react-select'
+import styles from '../styles/Stacks.module.css';
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const PRIMARY_COLOR = '#357251';
+const SECONDARY_COLOR = '#58B282';
+const TERTIARY_COLOR = '#9BD1B4';
+const STACKS_TEXT = 'There are {} stacks at GLP';
+const UNKNOWN_STACKS_TEXT = 'No reported stacks at GLP';
+const SINGLE_STACK_TEXT = 'There is 1 stack at GLP';
+const LOWER_STACK_REPORT_LIMIT = 0;
+const UPPER_STACK_REPORT_LIMIT = 20;
+const STACK_REPORT_TEXT = 'How many stacks are there?';
+const STACK_REPORT_OPTIONS = [];
+const STACK_EMOJIS = [
+    {
+        threshold: 0,
+        emoji: '🤷',
+    },
+    {
+        threshold: 2,
+        emoji: '😶‍🌫️',
+    },
+    {
+        threshold: 5,
+        emoji: '😄',
+    },
+    {
+        threshold: 7,
+        emoji: '🙃',
+    },
+    {
+        threshold: 10,
+        emoji: '😕',
+    },
+    {
+        threshold: 15,
+        emoji: '😞',
+    },
+    {
+        threshold: 20,
+        emoji: '🤮',
+    },
+    {
+        emoji: '😵',
+    },
+];
 
-      <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className={styles.logo} />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        footer img {
-          margin-left: 0.5rem;
-        }
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-decoration: none;
-          color: inherit;
-        }
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family:
-            Menlo,
-            Monaco,
-            Lucida Console,
-            Liberation Mono,
-            DejaVu Sans Mono,
-            Bitstream Vera Sans Mono,
-            Courier New,
-            monospace;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family:
-            -apple-system,
-            BlinkMacSystemFont,
-            Segoe UI,
-            Roboto,
-            Oxygen,
-            Ubuntu,
-            Cantarell,
-            Fira Sans,
-            Droid Sans,
-            Helvetica Neue,
-            sans-serif;
-        }
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  );
+for (let i = LOWER_STACK_REPORT_LIMIT; i <= UPPER_STACK_REPORT_LIMIT; i++) {
+    STACK_REPORT_OPTIONS.push({ value: i, label: `${i}` });
 }
+
+export default function Stacks() {
+    const [stacksLength, setStacksLength] = useState(-1);
+    const [stackReport, setStackReport] = useState();
+
+    const stackReportTheme = (theme) => ({
+        ...theme,
+        borderRadius: 0,
+        colors: {
+            ...theme.colors,
+            primary: PRIMARY_COLOR,
+            primary25: TERTIARY_COLOR,
+            primary50: SECONDARY_COLOR,
+        },
+    });
+
+    const renderStacksText = () => {
+        let stacksText = STACKS_TEXT.replace(/{}/g, stacksLength);
+
+        if (stacksLength === -1) {
+            stacksText = UNKNOWN_STACKS_TEXT;
+        }
+
+        if (stacksLength === 1) {
+            stacksText = SINGLE_STACK_TEXT;
+        }
+
+        return <h1 className={styles.title}>{stacksText}</h1>
+    };
+
+    const renderStacksEmoji = () => {
+        let stacksEmoji;
+
+        for (const emoji of STACK_EMOJIS) {
+            if (emoji.threshold === undefined) {
+                stacksEmoji = emoji.emoji;
+
+                break;
+            }
+
+            if (emoji.threshold > stacksLength) {
+                stacksEmoji = emoji.emoji;
+
+                break;
+            }
+        }
+
+        return <h1 className={styles.title}>{stacksEmoji}</h1>;
+    };
+
+    const handleSubmit = () => {
+        fetch('/api/submitStackReport', {
+            method: 'POST',
+            body: JSON.stringify({ numberOfStacks: stackReport.value }),
+        })
+            .then(res => res.json())
+            .then(data => setStacksLength(data));
+
+        setStackReport(undefined);
+    };
+
+    useEffect(() => {
+        fetch('/api/getStacks')
+            .then(res => res.json())
+            .then(data => setStacksLength(data));
+    }, []);
+
+    return (
+        <div>
+            <div className={styles.container}>
+                <Head>
+                    <title>GLP Stacks</title>
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+
+                <main>
+                    {renderStacksEmoji()}
+                    {renderStacksText()}
+
+                    <h1 className={styles.description}>{STACK_REPORT_TEXT}</h1>
+                    <div className={styles.form}>
+                        <Select
+                            key={`stackReportSelect-${stackReport}`}
+                            className={styles.select}
+                            options={STACK_REPORT_OPTIONS}
+                            theme={stackReportTheme}
+                            value={stackReport}
+                            onChange={setStackReport} />
+                        <button
+                            className={styles.button}
+                            disabled={stackReport === undefined || stackReport === null}
+                            onClick={handleSubmit}
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </main>
+            </div>
+
+            <div className={styles.footer}>
+                <h1>💚 Bentley and Jon</h1>
+            </div>
+        </div>
+    );
+};

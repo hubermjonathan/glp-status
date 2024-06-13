@@ -1,0 +1,106 @@
+.container {
+    min-height: 100vh;
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    margin: 0 0 1rem;
+    line-height: 1.15;
+    font-size: 3.3rem;
+}
+
+.title {
+    text-align: center;
+}
+
+.title,
+.description {
+    text-align: center;
+}
+
+.description {
+    line-height: 1.5;
+    font-size: 2rem;
+    color: #333;
+    margin-top: 3.3rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.form > * {
+    margin: 0.5rem;
+}
+
+.select > * {
+    border-radius: 0.25rem !important;
+}
+
+
+.button {
+  appearance: none;
+  background-color: #357251;
+  border: none;
+  border-radius: 0.25rem;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 0.5rem 1rem;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background-color: #2D6346;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button:disabled {
+  background-color: rgba(53, 114, 81, 0.5);
+  color: rgba(255, 255, 255, .8);
+  cursor: default;
+}
+
+.button:active {
+  background-color: #316B4C;
+}
+
+.footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    text-align: center;
+}
+
+.footer > h1 {
+    font-size: 1rem;
+    color: #333;
+}
+
+@media (max-width: 600px) {
+    .form {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
