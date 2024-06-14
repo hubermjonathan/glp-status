@@ -1,12 +1,16 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
 
+
+// constants
+
+const ROLE_ARN = 'arn:aws:iam::300537434890:role/service-role/AmplifySSRLoggingRole-e3440326-2cd9-4a40-a6ff-d2ca6f84d54a';
 const TABLE_NAME = 'glp-queue';
 const TTL = 3600;
 
-const dynamo = DynamoDBDocument.from(new DynamoDB({
-    region: process.env.REGION,
-}));
+
+// utility functions
 
 const getCurrentTime = () => {
     return Math.floor(new Date() / 1000);
@@ -25,6 +29,24 @@ const retrieveStacks = async () => {
         })
         .sort((a,b) => b['report_time'] - a['report_time']);
 };
+
+
+// aws setup
+
+const sts = new STSClient();
+const assumeRoleCommand = new AssumeRoleCommand({
+    RoleArn: ROLE_ARN,
+    RoleSessionName: `stacks-${getCurrentTime()}`,
+    DurationSeconds: 900,
+});
+const credentials = await sts.send(assumeRoleCommand);
+const dynamo = DynamoDBDocument.from(new DynamoDB({
+    region: process.env.REGION,
+    credentials: credentials.Credentials,
+}));
+
+
+// handler
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
