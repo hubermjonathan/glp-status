@@ -1,14 +1,12 @@
+import localFont from 'next/font/local';
 import '../styles/global.css';
-import { Lilita_One } from 'next/font/google';
+import '../styles/variables.css';
 
-const lilita = Lilita_One({
-    weight: '400',
-    subsets: ['latin']
-});
+const FONT = localFont({ src: '../public/lilita.ttf' })
 
 export default function App({ Component, pageProps }) {
     return (
-        <main className={lilita.className}>
+        <main className={FONT.className}>
             <Component {...pageProps} />
         </main>
     );

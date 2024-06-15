@@ -1,0 +1,39 @@
+.button {
+    appearance: none;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 0.25rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    padding: 0.5rem 1rem;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.button:hover {
+    background-color: var(--primary-darkest);
+}
+
+.button:focus {
+    outline: none;
+}
+
+.button:disabled {
+    background-color: var(--primary-disabled);
+    color: rgba(255, 255, 255, .8);
+    cursor: default;
+}
+
+.button:enabled:active {
+    background-color: var(--primary-darker);
+}

@@ -1,0 +1,6 @@
+:root {
+    --primary: #357251;
+    --primary-disabled: rgba(53, 114, 81, 0.5);
+    --primary-darker: #316B4C;
+    --primary-darkest: #2D6346;
+}
