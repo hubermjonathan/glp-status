@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { ReportModal, ReportText } from '../../components';
+import { LastReportText, ReportModal, ReportText } from '../../components';
 import styles from './style.module.css';
 import buttonStyles from '../../styles/buttons.module.css';
 
@@ -36,12 +36,16 @@ export default function Home() {
 
                 <ReportText reports={reports} />
 
-                <button
-                    className={buttonStyles.button}
-                    onClick={handleSubmit}
-                >
-                    Submit a Report
-                </button>
+                <div className={styles.buttonContainer}>
+                    <button
+                        className={buttonStyles.button}
+                        onClick={handleSubmit}
+                    >
+                        Submit a Report
+                    </button>
+
+                    <LastReportText reports={reports} />
+                </div>
 
                 <ReportModal isOpen={isReportModalOpen} setOpen={setReportModalOpen} setReports={setReports} />
             </div>

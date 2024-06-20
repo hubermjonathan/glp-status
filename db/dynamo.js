@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
-const TABLE_NAME = process.env.TABLE_NAME;
+const TABLE_NAME = process.env.ENV === 'prod' ? 'prod-glp-status' : 'staging-glp-status';
 
 const dynamoClient = new DynamoDBClient({
     region: process.env.REGION,
