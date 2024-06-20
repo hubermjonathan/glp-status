@@ -2,20 +2,21 @@ import { useEffect, useState } from 'react';
 import styles from './style.module.css';
 
 const STACKS_TEXT_FORMAT = 'there are {} stacks';
-const UNKNOWN_STACKS_TEXT = 'No stacks have been reported';
 const SINGLE_STACK_TEXT = 'there is 1 stack';
 const CONDITIONS_TEXT_FORMAT = 'the courts are {}';
-const UNKNOWN_CONDITIONS_TEXT = 'no conditions have been reported';
+const RESERVATIONS_TEXT_FORMAT = '{} courts are reserved';
+const SINGLE_RESERVATION_TEXT = '1 court is reserved';
 const EVERYTHING_UNKNOWN_TEXT = 'No reports at the moment'
 
 export function ReportText({ reports }) {
     const [text, setText] = useState();
 
     useEffect(() => {
-        const numberOfStacks = reports?.stacks?.[0].value ?? -1;
+        const stacks = reports?.stacks?.[0].value;
         const conditions = reports?.conditions?.[0].value;
+        const reservations = reports?.reservations?.[0].value;
 
-        if (numberOfStacks === -1 && !conditions) {
+        if (!stacks && stacks !== 0 && !conditions && !reservations) {
             setText(EVERYTHING_UNKNOWN_TEXT);
 
             return;
@@ -23,10 +24,12 @@ export function ReportText({ reports }) {
 
         let combinedText = '';
 
-        if (numberOfStacks === 1) {
-            combinedText = SINGLE_STACK_TEXT;
-        } else if (numberOfStacks >= 0) {
-            combinedText += STACKS_TEXT_FORMAT.replace(/{}/g, numberOfStacks);
+        if (stacks === 0) {
+            combinedText += STACKS_TEXT_FORMAT.replace(/{}/g, 'no');
+        } else if (stacks === 1) {
+            combinedText += SINGLE_STACK_TEXT;
+        } else if (stacks > 1) {
+            combinedText += STACKS_TEXT_FORMAT.replace(/{}/g, stacks);
         }
 
         if (conditions) {
@@ -35,6 +38,20 @@ export function ReportText({ reports }) {
             }
 
             combinedText += CONDITIONS_TEXT_FORMAT.replace(/{}/g, conditions);
+        }
+
+        if (reservations || reservations === 0) {
+            if (combinedText) {
+                combinedText += ' and ';
+            }
+
+            if (reservations === 0) {
+                combinedText += RESERVATIONS_TEXT_FORMAT.replace(/{}/g, 'no');
+            } else if (reservations === 1) {
+                combinedText += SINGLE_RESERVATION_TEXT;
+            } else if (reservations > 1) {
+                combinedText += RESERVATIONS_TEXT_FORMAT.replace(/{}/g, reservations);
+            }
         }
 
         setText(combinedText.charAt(0).toUpperCase() + combinedText.slice(1));

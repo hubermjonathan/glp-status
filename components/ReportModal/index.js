@@ -4,26 +4,30 @@ import Modal from 'react-modal';
 import Select from 'react-select'
 import styles from './style.module.css';
 import buttonStyles from '../../styles/buttons.module.css';
-import { LOWER_STACKS_REPORT_LIMIT, UPPER_STACKS_REPORT_LIMIT, ACCEPTED_CONDITIONS } from '../../constants/constants';
+import { LOWER_STACKS_REPORT_LIMIT, UPPER_STACKS_REPORT_LIMIT, ACCEPTED_CONDITIONS, LOWER_RESERVATIONS_REPORT_LIMIT, UPPER_RESERVATIONS_REPORT_LIMIT } from '../../constants/constants';
 
 const STACKS_OPTIONS = [];
 const CONDITIONS_OPTIONS = [];
+const RESERVATIONS_OPTIONS = [];
 
 const PRIMARY_COLOR = '#357251';
 const SECONDARY_COLOR = '#58B282';
 const TERTIARY_COLOR = '#9BD1B4';
-const FONT = localFont({ src: '../../public/lilita.ttf' })
 
 for (let i = LOWER_STACKS_REPORT_LIMIT; i <= UPPER_STACKS_REPORT_LIMIT; i++) {
     STACKS_OPTIONS.push({ value: i, label: `${i}` });
 }
 ACCEPTED_CONDITIONS.forEach(condition => CONDITIONS_OPTIONS.push({ value: condition, label: `${condition}` }));
+for (let i = LOWER_RESERVATIONS_REPORT_LIMIT; i <= UPPER_RESERVATIONS_REPORT_LIMIT; i++) {
+    RESERVATIONS_OPTIONS.push({ value: i, label: `${i}` });
+}
 
 Modal.setAppElement('#__next');
 
 export function ReportModal({ isOpen, setOpen, setReports }) {
     const [stacks, setStacks] = useState();
     const [conditions, setConditions] = useState();
+    const [reservations, setReservations] = useState();
     const [isSubmitDisabled, setSubmitDisabled] = useState(true);
 
     const selectTheme = (theme) => ({
@@ -39,6 +43,7 @@ export function ReportModal({ isOpen, setOpen, setReports }) {
     const resetModal = () => {
         setStacks();
         setConditions();
+        setReservations();
         setOpen(false);
     };
 
@@ -50,7 +55,7 @@ export function ReportModal({ isOpen, setOpen, setReports }) {
         if (stacks !== undefined && stacks !== null) {
             fetch('/api/stacks', {
                 method: 'PUT',
-                body: JSON.stringify({ numberOfStacks: stacks.value }),
+                body: JSON.stringify({ stacks: stacks.value }),
             })
                 .then(res => res.json())
                 .then(data => setReports(data));
@@ -65,16 +70,25 @@ export function ReportModal({ isOpen, setOpen, setReports }) {
                 .then(data => setReports(data));
         }
 
+        if (reservations !== undefined && reservations !== null) {
+            fetch('/api/reservations', {
+                method: 'PUT',
+                body: JSON.stringify({ reservations: reservations.value }),
+            })
+                .then(res => res.json())
+                .then(data => setReports(data));
+        }
+
         resetModal();
     };
 
     useEffect(() => {
-        if ((stacks === undefined || stacks === null) && (conditions === undefined || conditions === null)) {
+        if ((stacks === undefined || stacks === null) && (conditions === undefined || conditions === null) && (reservations === undefined || reservations === null)) {
             setSubmitDisabled(true);
         } else {
             setSubmitDisabled(false);
         }
-    }, [stacks, conditions]);
+    }, [stacks, conditions, reservations]);
 
     return (
         <Modal
@@ -101,6 +115,15 @@ export function ReportModal({ isOpen, setOpen, setReports }) {
                 theme={selectTheme}
                 value={conditions}
                 onChange={setConditions} />
+
+            <p className={styles.header}>How many courts are reserved?</p>
+            <Select
+                key={`reservationsSelect-${reservations}`}
+                className={styles.select}
+                options={RESERVATIONS_OPTIONS}
+                theme={selectTheme}
+                value={reservations}
+                onChange={setReservations} />
 
             <button
                 className={`${styles.button} ${buttonStyles.button}`}

@@ -8,6 +8,14 @@ const PST_OFFSET = -8;
 export function LastReportText({ reports }) {
     const [text, setText] = useState();
 
+    const getMostRecentReportTime = (reports) => {
+        const latestStacksReportTime = reports?.stacks?.[0].report_time ?? 0;
+        const latestConditionsReportTime = reports?.conditions?.[0].report_time ?? 0;
+        const latestReservationsReportTime = reports?.reservations?.[0].report_time ?? 0;
+
+        return Math.max(latestStacksReportTime, latestConditionsReportTime, latestReservationsReportTime);
+    };
+
     const convertReportTimeToDate = (reportTime) => {
         const currentDate = new Date();
         const currentEpoch = Math.floor(currentDate.getTime() / 1000);
@@ -28,10 +36,10 @@ export function LastReportText({ reports }) {
         }
 
         return 'more than an hour ago';
-    }
+    };
 
     useEffect(() => {
-        const latestReportTime = reports?.stacks?.[0].report_time;
+        const latestReportTime = getMostRecentReportTime(reports);
 
         if (!latestReportTime) {
             return;
