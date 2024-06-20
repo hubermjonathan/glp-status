@@ -25,7 +25,7 @@ export function ReportText({ reports }) {
 
         if (numberOfStacks === 1) {
             combinedText = SINGLE_STACK_TEXT;
-        } else if (numberOfStacks > 0) {
+        } else if (numberOfStacks >= 0) {
             combinedText += STACKS_TEXT_FORMAT.replace(/{}/g, numberOfStacks);
         }
 

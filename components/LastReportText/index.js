@@ -38,7 +38,6 @@ export function LastReportText({ reports }) {
         }
 
         const readableReportDate = convertReportTimeToDate(latestReportTime, PDT_OFFSET);
-        console.log(latestReportTime, readableReportDate);
 
         setText(LAST_REPORT_TEXT_FORMAT.replace(/{}/g, readableReportDate));
     }, [reports]);
